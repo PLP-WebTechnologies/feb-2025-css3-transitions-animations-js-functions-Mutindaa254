@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SolarChill Hub Demo</title>
+  <style>
+    :root {
+      --bg-light: #f0f8ff;
+      --text-light: #333;
+      --bg-dark: #1c1c1c;
+      --text-dark: #f9f9f9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      margin: 0;
+      padding-top: 80px;
+      transition: background-color 0.4s ease, color 0.4s ease;
+    }
+
+    body.dark-mode {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    h1 {
+      transition: color 0.5s ease-in-out;
+      text-align: center;
+    }
+
+    .top-bar {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+    }
+
+    .top-bar.dark-mode {
+      background-color: rgba(28, 28, 28, 0.9);
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .theme-toggle {
+      cursor: pointer;
+      font-size: 26px;
+      transition: color 0.3s ease;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    button {
+      padding: 12px 24px;
+      margin: 8px;
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #005fa3;
+    }
+
+    .animate-box {
+      width: 100px;
+      height: 100px;
+      background-color: rgb(0, 255, 225);
+      margin-top: 20px;
+      border-radius: 8px;
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .move {
+      transform: translateX(200px) rotate(45deg);
+    }
+
+    @media (max-width: 768px) {
+      .top-bar {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 10px;
+      }
+      .logo {
+        width: 50px;
+      }
+      .theme-toggle {
+        font-size: 22px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      main {
+        padding: 10px;
+      }
+      button {
+        padding: 10px 18px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar" id="topBar">
+    <img src="solar chill hub.png" alt="SolarChill Logo" class="logo" />
+    <span class="theme-toggle" id="toggleIcon" title="Toggle Dark/Light Mode">🌙</span>
+  </div>
+
+  <main>
+    <h1 id="welcome">Welcome to SolarChill Hub</h1>
+    <button id="animateBtn">Animate Box</button>
+    <button id="savePrefBtn">Save Color Preference</button>
+    <div class="animate-box" id="box"></div>
+  </main>
+
+  <script>
+    const box = document.getElementById('box');
+    const welcome = document.getElementById('welcome');
+    const body = document.body;
+    const toggleIcon = document.getElementById('toggleIcon');
+    const topBar = document.getElementById('topBar');
+
+    document.getElementById('animateBtn').addEventListener('click', () => {
+      box.classList.toggle('move');
+      localStorage.setItem('lastAction', 'moved box');
+    });
+
+    document.getElementById('savePrefBtn').addEventListener('click', () => {
+      const favColor = prompt('Enter your favorite color:');
+      if (favColor) {
+        localStorage.setItem('favColor', favColor);
+        welcome.style.color = favColor;
+      }
+    });
+
+    toggleIcon.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+      topBar.classList.toggle('dark-mode');
+      const mode = body.classList.contains('dark-mode') ? 'dark' : 'light';
+      toggleIcon.textContent = mode === 'dark' ? '☀️' : '🌙';
+      localStorage.setItem('themeMode', mode);
+    });
+
+    // Load preferences on page load
+    window.onload = () => {
+      const savedColor = localStorage.getItem('favColor');
+      const savedMode = localStorage.getItem('themeMode');
+
+      if (savedColor) {
+        welcome.style.color = savedColor;
+      }
+
+      if (savedMode === 'dark') {
+        body.classList.add('dark-mode');
+        topBar.classList.add('dark-mode');
+        toggleIcon.textContent = '☀️';
+      }
+    };
+  </script>
+</body>
+</html>
